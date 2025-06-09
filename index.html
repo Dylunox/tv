@@ -6,89 +6,31 @@
     <title>موقع بث تلفزيوني مباشر</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
             overflow: hidden; /* منع التمرير غير الضروري */
-        }
-        h1 {
-            color: #333;
-            padding: 20px 0;
-            font-size: 24px;
-        }
-        #channel-list {
-            margin: 20px 0;
-        }
-        #channel-list button {
-            padding: 12px 24px;
-            margin: 5px;
-            font-size: 18px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #channel-list button:hover {
-            background-color: #0056b3;
+            background-color: #000; /* خلفية سوداء لتجنب الحواف */
         }
         #video-container {
-            width: 100%;
-            max-width: 1200px; /* مناسب لشاشات التلفاز */
-            margin: 0 auto;
-            position: relative;
+            width: 100vw; /* عرض الشاشة الكامل */
+            height: 100vh; /* ارتفاع الشاشة الكامل */
+            position: fixed;
+            top: 0;
+            left: 0;
         }
         #live-stream {
             width: 100%;
-            height: auto;
-            background-color: #000;
+            height: 100%;
+            object-fit: cover; /* تكبير الفيديو لملء الشاشة مع الحفاظ على النسب */
             display: block;
-        }
-        #fullscreen-btn {
-            padding: 12px 24px;
-            font-size: 18px;
-            margin: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #fullscreen-btn:hover {
-            background-color: #218838;
-        }
-        /* تصميم متجاوب للهاتف */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 20px;
-            }
-            #channel-list button, #fullscreen-btn {
-                width: 90%;
-                margin: 5px auto;
-                font-size: 16px;
-                padding: 10px;
-            }
-            #video-container {
-                max-width: 100%;
-            }
+            background-color: #000;
         }
     </style>
 </head>
 <body>
-    <h1>اختر قناة للمشاهدة</h1>
-    <div id="channel-list">
-        <button onclick="changeChannel(1)">1 - الجزيرة</button>
-        <button onclick="changeChannel(2)">2 - قناة عمان</button>
-        <button onclick="changeChannel(3)">3 - الاستقامة</button>
-    </div>
     <div id="video-container">
-        <video id="live-stream" controls autoplay></video>
+        <video id="live-stream" autoplay></video>
     </div>
-    <button id="fullscreen-btn" onclick="toggleFullscreen()">إلغاء ملء الشاشة</button>
 
     <script>
         // قائمة الروابط للقنوات
@@ -106,21 +48,9 @@
             // ضمان أن الصوت مفعل
             video.muted = false;
             video.volume = 1.0; // الصوت على أعلى مستوى
-            // التأكد من أن الشاشة ممتلئة بعد تغيير القناة
+            // التأكد من أن الشاشة ممتلئة
             if (!document.fullscreenElement) {
                 document.getElementById('video-container').requestFullscreen().catch(error => console.error('خطأ في تفعيل ملء الشاشة:', error));
-            }
-        }
-
-        // دالة لتفعيل/إلغاء ملء الشاشة
-        function toggleFullscreen() {
-            const videoContainer = document.getElementById('video-container');
-            if (!document.fullscreenElement) {
-                videoContainer.requestFullscreen().catch(error => console.error('خطأ في تفعيل ملء الشاشة:', error));
-                document.getElementById('fullscreen-btn').textContent = 'إلغاء ملء الشاشة';
-            } else {
-                document.exitFullscreen();
-                document.getElementById('fullscreen-btn').textContent = 'ملء الشاشة';
             }
         }
 
@@ -133,20 +63,6 @@
             }
         });
 
-        // تحديث نص زر ملء الشاشة وإعادة التفعيل إذا خرج المستخدم
-        document.addEventListener('fullscreenchange', function() {
-            if (!document.fullscreenElement) {
-                document.getElementById('fullscreen-btn').textContent = 'ملء الشاشة';
-                // إعادة تفعيل ملء الشاشة تلقائيًا بعد 2 ثانية إذا خرج المستخدم
-                setTimeout(() => {
-                    if (!document.fullscreenElement) {
-                        document.getElementById('video-container').requestFullscreen().catch(error => console.error('خطأ في إعادة تفعيل ملء الشاشة:', error));
-                        document.getElementById('fullscreen-btn').textContent = 'إلغاء ملء الشاشة';
-                    }
-                }, 2000);
-            }
-        });
-
         // تشغيل القناة الأولى افتراضيًا بأعلى جودة وملء الشاشة
         window.onload = function() {
             const video = document.getElementById('live-stream');
@@ -155,8 +71,18 @@
             video.volume = 1.0; // الصوت على أعلى مستوى
             // تفعيل ملء الشاشة تلقائيًا
             document.getElementById('video-container').requestFullscreen().catch(error => console.error('خطأ في تفعيل ملء الشاشة:', error));
-            document.getElementById('fullscreen-btn').textContent = 'إلغاء ملء الشاشة';
         };
+
+        // إعادة تفعيل ملء الشاشة إذا خرج المستخدم
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                setTimeout(() => {
+                    if (!document.fullscreenElement) {
+                        document.getElementById('video-container').requestFullscreen().catch(error => console.error('خطأ في إعادة تفعيل ملء الشاشة:', error));
+                    }
+                }, 2000);
+            }
+        });
     </script>
 </body>
 </html>
