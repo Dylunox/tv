@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع بث تلفزيوني مباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* لتجنب التمرير غير الضروري */
+        }
+        h1 {
+            color: #333;
+            padding: 20px 0;
+            font-size: 24px;
+        }
+        #channel-list {
+            margin: 20px 0;
+        }
+        #channel-list button {
+            padding: 12px 24px;
+            margin: 5px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #channel-list button:hover {
+            background-color: #0056b3;
+        }
+        #video-container {
+            width: 100%;
+            max-width: 1200px; /* مناسب لشاشات التلفاز */
+            margin: 0 auto;
+            position: relative;
+        }
+        #live-stream {
+            width: 100%;
+            height: auto;
+            background-color: #000;
+            display: block;
+        }
+        #fullscreen-btn {
+            padding: 12px 24px;
+            font-size: 18px;
+            margin: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #fullscreen-btn:hover {
+            background-color: #218838;
+        }
+        /* تصميم متجاوب للهاتف */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            #channel-list button, #fullscreen-btn {
+                width: 90%;
+                margin: 5px auto;
+                font-size: 16px;
+                padding: 10px;
+            }
+            #video-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>اختر قناة للمشاهدة</h1>
+    <div id="channel-list">
+        <button onclick="changeChannel(1)">1 - الجزيرة</button>
+        <button onclick="changeChannel(2)">2 - قناة عمان</button>
+        <button onclick="changeChannel(3)">3 - الاستقامة</button>
+    </div>
+    <div id="video-container">
+        <video id="live-stream" controls autoplay muted></video>
+    </div>
+    <button id="fullscreen-btn" onclick="toggleFullscreen()">ملء الشاشة</button>
+
+    <script>
+        // قائمة الروابط للقنوات
+        const channels = {
+            1: 'https://live-hls-web-ajm.getaj.net/AJM/index.m3u8', // الجزيرة
+            2: 'https://partwota.cdn.mgmlcdn.com/omlive/smil:omlive.stream.smil/chunklist.m3u8', // قناة عمان
+            3: 'https://jmc-live.ercdn.net/alistiqama/alistiqama.m3u8' // الاستقامة
+        };
+
+        // دالة لتغيير القناة
+        function changeChannel(channelNumber) {
+            const video = document.getElementById('live-stream');
+            video.src = channels[channelNumber];
+            video.play().catch(error => console.error('خطأ في تشغيل الفيديو:', error));
+        }
+
+        // دالة لتفعيل/إلغاء ملء الشاشة
+        function toggleFullscreen() {
+            const videoContainer = document.getElementById('video-container');
+            if (!document.fullscreenElement) {
+                videoContainer.requestFullscreen().catch(error => console.error('خطأ في تفعيل ملء الشاشة:', error));
+                document.getElementById('fullscreen-btn').textContent = 'إلغاء ملء الشاشة';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('fullscreen-btn').textContent = 'ملء الشاشة';
+            }
+        }
+
+        // التعرف على الأرقام المضغوطة من التلفاز أو لوحة المفاتيح
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (key >= '1' && key <= '3') { // فقط الأرقام 1-3 للقنوات المتاحة
+                const channelNumber = parseInt(key);
+                changeChannel(channelNumber);
+            }
+        });
+
+        // تحديث نص زر ملء الشاشة عند الخروج من وضع ملء الشاشة
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                document.getElementById('fullscreen-btn').textContent = 'ملء الشاشة';
+            }
+        });
+
+        // تشغيل القناة الأولى افتراضيًا
+        window.onload = function() {
+            changeChannel(1);
+        };
+    </script>
+</body>
+</html>
