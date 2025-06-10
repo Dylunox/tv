@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live TV Streaming - Professional</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         body {
@@ -37,64 +35,60 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(0, 0, 30, 0.8));
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.85), rgba(0, 0, 20, 0.85));
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
             z-index: 1000;
             text-align: center;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
-            min-width: 500px;
-            max-height: 85vh;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            min-width: 600px;
+            max-height: 80vh;
             overflow-y: auto;
-            border: 2px solid rgba(0, 123, 255, 0.3);
-            animation: slideIn 0.4s ease-out forwards;
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            animation: fadeIn 0.3s ease-out forwards;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         #channel-menu h3 {
-            margin: 0 0 20px;
-            font-size: 2em;
+            margin: 0 0 30px;
+            font-size: 2.5em;
             color: #fff;
-            text-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
         }
         #channel-menu h3 i {
             color: #007bff;
+            font-size: 1.2em;
         }
         #channel-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 20px;
+            margin: 0 0 30px;
         }
         #channel-list li {
-            padding: 15px 25px;
-            font-size: 1.4em;
+            padding: 20px 30px;
+            font-size: 1.8em;
             color: #fff;
             cursor: pointer;
             border-radius: 10px;
             margin: 10px 0;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             background: rgba(255, 255, 255, 0.05);
-            transition: background 0.3s, transform 0.3s;
+            transition: background 0.2s;
         }
         #channel-list li:hover, #channel-list li.selected {
-            background: linear-gradient(90deg, rgba(0, 123, 255, 0.8), rgba(0, 80, 200, 0.8));
-            transform: translateX(10px);
+            background: rgba(0, 123, 255, 0.7);
         }
         #channel-list li i {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: #007bff;
-        }
-        #channel-list li.hidden {
-            display: none;
         }
         #channel-input-container {
             display: flex;
@@ -104,15 +98,15 @@
             margin-top: 20px;
         }
         #channel-input {
-            width: 120px;
-            padding: 12px;
-            font-size: 1.3em;
+            width: 150px;
+            padding: 15px;
+            font-size: 1.8em;
             text-align: center;
             border: none;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.15);
             color: #fff;
-            transition: background 0.3s, box-shadow 0.3s;
+            transition: background 0.2s, box-shadow 0.2s;
         }
         #channel-input::placeholder {
             color: rgba(255, 255, 255, 0.5);
@@ -120,14 +114,14 @@
         #channel-input:focus {
             outline: none;
             background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         }
         #channel-input-label {
-            font-size: 1.3em;
+            font-size: 1.8em;
             color: #fff;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
         }
         #channel-input-label i {
             color: #007bff;
@@ -135,10 +129,10 @@
         #progress-bar {
             display: none;
             width: 100%;
-            height: 5px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
-            margin-top: 10px;
+            margin-top: 15px;
             overflow: hidden;
         }
         #progress-fill {
@@ -147,21 +141,78 @@
             background: #007bff;
             transition: width 3s linear;
         }
+        #error-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(200, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.6em;
+            z-index: 1001;
+            animation: fadeInOut 3s ease-in-out forwards;
+        }
+        #channel-transition {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, rgba(0, 123, 255, 0.9), rgba(0, 80, 200, 0.9));
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.8em;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: slideInDown 0.3s ease-out, slideOutUp 0.3s ease-in 4.3s forwards;
+        }
+        #transition-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #transition-progress-fill {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #007bff);
+            transition: width 4s linear;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes slideInDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        @keyframes slideOutUp {
+            from { transform: translate(-50%, 0); opacity: 1; }
+            to { transform: translate(-50%, -100%); opacity: 0; }
+        }
+        #channel-transition i {
+            font-size: 1.2em;
+            color: #fff;
+        }
         #footer {
             position: fixed;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9em;
-            z-index: 5;
-        }
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 999;
-            pointer-events: none;
+            font-size: 1.2em;
+            z-index: 1;
         }
         ::-webkit-scrollbar {
             width: 10px;
@@ -180,23 +231,29 @@
         <video id="live-stream" autoplay playsinline></video>
     </div>
     <div id="channel-menu">
-        <div id="particles-js"></div>
-        <h3><i class="fas fa-tv"></i> Channel List</h3>
+        <h3><i class="fas fa-tv"></i> قائمة القنوات</h3>
         <ul id="channel-list">
-            <li data-channel="1"><i class="fas fa-newspaper"></i> 1. Al Jazeera</li>
-            <li data-channel="2"><i class="fas fa-globe"></i> 2. Oman TV</li>
-            <li data-channel="3"><i class="fas fa-mosque"></i> 3. Al Istiqama</li>
-            <li data-channel="4"><i class="fas fa-futbol"></i> 4. Oman Sports</li>
-            <li data-channel="5"><i class="fas fa-binoculars"></i> 5. National Geographic Abu Dhabi</li>
-            <li data-channel="6"><i class="fas fa-newspaper"></i> 6. Al Arabiya</li>
-            <li data-channel="7"><i class="fas fa-child"></i> 7. Spacetoon</li>
+            <li data-channel="1"><i class="fas fa-newspaper"></i> 1. الجزيرة</li>
+            <li data-channel="2"><i class="fas fa-globe"></i> 2. عمان</li>
+            <li data-channel="3"><i class="fas fa-mosque"></i> 3. الاستقامة</li>
+            <li data-channel="4"><i class="fas fa-futbol"></i> 4. عمان الرياضية</li>
+            <li data-channel="5"><i class="fas fa-binoculars"></i> 5. ناشيونال جيوغرافيك</li>
+            <li data-channel="6"><i class="fas fa-newspaper"></i> 6. العربية</li>
+            <li data-channel="7"><i class="fas fa-child"></i> 7. سبيستون</li>
         </ul>
         <div id="channel-input-container">
-            <label id="channel-input-label" for="channel-input"><i class="fas fa-search"></i> Enter Number or Name:</label>
-            <input type="text" id="channel-input" maxlength="20" placeholder="1-7 or Name">
+            <label id="channel-input-label" for="channel-input"><i class="fas fa-hashtag"></i> أدخل الرقم:</label>
+            <input type="text" id="channel-input" maxlength="2" placeholder="1-7">
         </div>
         <div id="progress-bar">
             <div id="progress-fill"></div>
+        </div>
+    </div>
+    <div id="error-message"></div>
+    <div id="channel-transition">
+        <span id="transition-text"></span>
+        <div id="transition-progress">
+            <div id="transition-progress-fill"></div>
         </div>
     </div>
     <div id="footer">Developed by ins:abdullah__krs</div>
@@ -213,47 +270,98 @@
             7: 'https://streams.spacetoon.com/live/stchannel/smil:livesmil.smil/playlist.m3u8' // Spacetoon
         };
 
-        // Channel names for filtering
+        // Channel names for display
         const channelNames = {
-            1: 'Al Jazeera',
-            2: 'Oman TV',
-            3: 'Al Istiqama',
-            4: 'Oman Sports',
-            5: 'National Geographic Abu Dhabi',
-            6: 'Al Arabiya',
-            7: 'Spacetoon'
+            1: 'الجزيرة',
+            2: 'عمان',
+            3: 'الاستقامة',
+            4: 'عمان الرياضية',
+            5: 'ناشيونال جيوغرافيك',
+            6: 'العربية',
+            7: 'سبيستون'
         };
+
+        // Initialize Hls instance
+        let hls = null;
+        if (Hls.isSupported()) {
+            hls = new Hls({
+                autoStartLoad: true,
+                maxBufferLength: 10,
+                maxMaxBufferLength: 20,
+                backBufferLength: 0
+            });
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    console.error('HLS fatal error:', data);
+                    showErrorMessage('خطأ في تحميل القناة');
+                }
+            });
+        }
 
         // Switch channel
         function changeChannel(channelNumber) {
+            if (!channels[channelNumber]) {
+                showErrorMessage('القناة غير موجودة');
+                return;
+            }
+
             const video = document.getElementById('live-stream');
 
-            if (Hls.isSupported()) {
-                const hls = new Hls();
+            if (hls && Hls.isSupported()) {
+                hls.detachMedia();
                 hls.loadSource(channels[channelNumber]);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                hls.startLoad();
+                setTimeout(() => {
                     video.play().catch(error => {
                         console.error('Video playback error:', error);
+                        showErrorMessage('فشل تشغيل القناة');
                     });
-                });
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        console.error('HLS fatal error:', data);
-                    }
-                });
+                }, 500); // Delay to ensure stream is ready
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = channels[channelNumber];
-                video.play().catch(error => {
-                    console.error('Video playback error:', error);
-                });
+                setTimeout(() => {
+                    video.play().catch(error => {
+                        console.error('Video playback error:', error);
+                        showErrorMessage('فشل تشغيل القناة');
+                    });
+                }, 500);
             } else {
                 console.error('HLS not supported in this browser');
+                showErrorMessage('المتصفح لا يدعم البث');
+                return;
             }
 
             video.muted = false;
             video.volume = 1.0;
             hideChannelMenu();
+            showTransitionMessage(channelNumber);
+        }
+
+        // Show error message
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show transition message
+        function showTransitionMessage(channelNumber) {
+            const transitionDiv = document.getElementById('channel-transition');
+            const transitionText = document.getElementById('transition-text');
+            const progressFill = document.getElementById('transition-progress-fill');
+            transitionText.innerHTML = `<i class="fas fa-tv"></i> تم الانتقال إلى القناة: ${channelNames[channelNumber]} (${channelNumber})`;
+            transitionDiv.style.display = 'flex';
+            progressFill.style.width = '0';
+            setTimeout(() => {
+                progressFill.style.width = '100%';
+            }, 10);
+            setTimeout(() => {
+                transitionDiv.style.display = 'none';
+            }, 4000);
         }
 
         // Show channel menu
@@ -263,18 +371,8 @@
             const input = document.getElementById('channel-input');
             input.value = '';
             input.focus();
-            filterChannels('');
             isMenuOpen = true;
             updateSelectedChannel(0);
-            initParticles();
-            VanillaTilt.init(document.querySelectorAll('#channel-list li'), {
-                max: 15,
-                speed: 400,
-                glare: true,
-                'max-glare': 0.3
-            });
-            // Play click sound
-            playClickSound();
         }
 
         // Hide channel menu
@@ -283,10 +381,6 @@
             menu.style.display = 'none';
             isMenuOpen = false;
             stopProgressBar();
-            // Destroy tilt effects to save resources
-            document.querySelectorAll('#channel-list li').forEach(item => {
-                if (item.vanillaTilt) item.vanillaTilt.destroy();
-            });
         }
 
         // Variables
@@ -296,18 +390,17 @@
 
         // Update selected channel
         function updateSelectedChannel(index) {
-            const channelItems = document.querySelectorAll('#channel-list li:not(.hidden)');
+            const channelItems = document.querySelectorAll('#channel-list li');
             channelItems.forEach((item, i) => {
                 item.classList.toggle('selected', i === index);
             });
             selectedIndex = index;
-            // Scroll selected item into view
             if (channelItems[index]) {
                 channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
 
-        // Handle channel input with 3-second delay
+        // Handle channel input with 3-second delay (for menu input only)
         function handleChannelInput(channelNumber) {
             const input = document.getElementById('channel-input');
             input.value = channelNumber;
@@ -317,28 +410,10 @@
                 channelInputTimer = setTimeout(() => {
                     changeChannel(channelNumber);
                 }, 3000);
+            } else {
+                stopProgressBar();
+                showErrorMessage('رقم القناة غير صحيح');
             }
-        }
-
-        // Filter channels by name or number
-        function filterChannels(query) {
-            const channelItems = document.querySelectorAll('#channel-list li');
-            let visibleIndex = 0;
-            channelItems.forEach((item, index) => {
-                const channelNumber = item.getAttribute('data-channel');
-                const channelName = channelNames[channelNumber].toLowerCase();
-                const isMatch = channelNumber.includes(query) || channelName.includes(query.toLowerCase());
-                item.classList.toggle('hidden', !isMatch);
-                if (isMatch && visibleIndex === selectedIndex) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-                if (isMatch) visibleIndex++;
-            });
-            // Reset selected index if no items are visible
-            if (visibleIndex === 0) selectedIndex = 0;
-            updateSelectedChannel(selectedIndex);
         }
 
         // Start progress bar
@@ -360,32 +435,6 @@
             progressFill.style.width = '0';
         }
 
-        // Play click sound
-        function playClickSound() {
-            const audio = new Audio('https://cdn.pixabay.com/audio/2023/02/14/audio_7c90ebbcf0.mp3');
-            audio.volume = 0.3;
-            audio.play().catch(error => console.log('Sound playback error:', error));
-        }
-
-        // Initialize particles
-        function initParticles() {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 50, density: { enable: true, value_area: 800 } },
-                    color: { value: '#007bff' },
-                    shape: { type: 'circle' },
-                    opacity: { value: 0.5, random: true },
-                    size: { value: 3, random: true },
-                    line_linked: { enable: false },
-                    move: { enable: true, speed: 2, direction: 'none', random: true }
-                },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: { onhover: { enable: false }, onclick: { enable: false }, resize: true }
-                }
-            });
-        }
-
         // Handle keyboard events
         function handleKeyEvent(event) {
             const key = event.key;
@@ -398,31 +447,25 @@
             } else if (isMenuOpen && (key >= '1' && key <= '7' || (keyCode >= 49 && keyCode <= 55))) {
                 event.preventDefault();
                 handleChannelInput(key);
-            } else if (key >= '1' && key <= '7' || (keyCode >= 49 && keyCode <= 55)) {
+            } else if (key >= '1' && key <= '9' || (keyCode >= 49 && keyCode <= 57)) {
                 event.preventDefault();
-                changeChannel(key);
+                changeChannel(key); // Immediate channel change
             } else if (isMenuOpen && (key === 'ArrowUp' || keyCode === 38)) {
                 event.preventDefault();
-                const visibleItems = document.querySelectorAll('#channel-list li:not(.hidden)');
                 updateSelectedChannel(Math.max(0, selectedIndex - 1));
             } else if (isMenuOpen && (key === 'ArrowDown' || keyCode === 40)) {
                 event.preventDefault();
-                const visibleItems = document.querySelectorAll('#channel-list li:not(.hidden)');
-                updateSelectedChannel(Math.min(visibleItems.length - 1, selectedIndex + 1));
+                updateSelectedChannel(Math.min(document.querySelectorAll('#channel-list li').length - 1, selectedIndex + 1));
             } else if (isMenuOpen && (key === 'Enter' || keyCode === 13)) {
                 event.preventDefault();
                 const selectedChannel = document.querySelector('#channel-list li.selected');
                 if (selectedChannel) {
                     const channelNumber = selectedChannel.getAttribute('data-channel');
                     changeChannel(channelNumber);
-                    playClickSound();
                 }
-            } else if (key === 'Escape' || key === 'c' || keyCode === 27 || keyCode === 67) {
+            } else if (key === 'Escape' || key === 'Backspace' || keyCode === 27 || keyCode === 8) {
                 event.preventDefault();
                 hideChannelMenu();
-            } else if (isMenuOpen && (key === 'f' || keyCode === 70)) {
-                event.preventDefault();
-                document.getElementById('channel-input').focus();
             }
         }
 
@@ -435,7 +478,6 @@
             item.addEventListener('click', () => {
                 const channelNumber = item.getAttribute('data-channel');
                 changeChannel(channelNumber);
-                playClickSound();
             });
         });
 
@@ -443,7 +485,6 @@
         document.getElementById('channel-input').addEventListener('input', function() {
             clearTimeout(channelInputTimer);
             const input = this.value;
-            filterChannels(input);
             if (input && channels[input]) {
                 startProgressBar();
                 channelInputTimer = setTimeout(() => {
@@ -451,28 +492,18 @@
                 }, 3000);
             } else {
                 stopProgressBar();
-            }
-        });
-
-        // Handle mouse wheel scroll
-        document.getElementById('channel-menu').addEventListener('wheel', (event) => {
-            if (isMenuOpen) {
-                event.preventDefault();
-                const visibleItems = document.querySelectorAll('#channel-list li:not(.hidden)');
-                if (event.deltaY > 0) {
-                    updateSelectedChannel(Math.min(visibleItems.length - 1, selectedIndex + 1));
-                } else {
-                    updateSelectedChannel(Math.max(0, selectedIndex - 1));
-                }
+                if (input) showErrorMessage('رقم القناة غير صحيح');
             }
         });
 
         // Initialize first channel (Al Jazeera)
         window.onload = function() {
             const video = document.getElementById('live-stream');
-            changeChannel(1); // Start with Al Jazeera
-            video.muted = false;
-            video.volume = 1.0;
+            setTimeout(() => {
+                changeChannel(1); // Start with Al Jazeera
+                video.muted = false;
+                video.volume = 1.0;
+            }, 500); // Delay to ensure Hls is ready
         };
     </script>
 </body>
